@@ -14,14 +14,14 @@
 #include <iostream>
 
 // website state
-{
-  GLFWwindow* g_window;
-  ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-  bool show_demo_window = true;
-  bool show_another_window = false;
-  int g_width;
-  int g_height;
-}
+
+GLFWwindow* g_window;
+ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+bool show_demo_window = true;
+bool show_another_window = false;
+bool show_website_description = true;
+int g_width;
+int g_height;
 
 EM_JS(int, canvas_get_width, (), {
   return Module.canvas.width;
