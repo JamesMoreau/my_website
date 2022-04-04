@@ -2,6 +2,7 @@ CXX = emcc
 OUTPUT = imgui.js
 LIB_DIR:=lib
 IMGUI_DIR:=lib/imgui
+STB_DIR:=lib/stb
 
 SOURCES = main.cpp
 SOURCES += $(IMGUI_DIR)/backends/imgui_impl_glfw.cpp $(IMGUI_DIR)/backends/imgui_impl_opengl3.cpp
@@ -15,7 +16,7 @@ USE_WASM = -s WASM=1
 all: $(SOURCES) $(OUTPUT)
 
 $(OUTPUT): $(SOURCES) 
-	$(CXX)  $(SOURCES) -std=c++11 -o $(OUTPUT) $(LIBS) $(WEBGL_VER) -O2 --preload-file data $(USE_WASM) -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends
+	$(CXX)  $(SOURCES) -std=c++11 -o $(OUTPUT) $(LIBS) $(WEBGL_VER) -O2 --preload-file data $(USE_WASM) -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends -I$(STB_DIR)
 
 run: 
 	python -m SimpleHTTPServer 8000
