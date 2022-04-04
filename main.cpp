@@ -13,15 +13,19 @@
 #include "imgui_impl_opengl3.h"
 #include <iostream>
 
-// website state
-
 GLFWwindow* g_window;
-ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-bool show_demo_window = true;
-bool show_another_window = false;
-bool show_website_description = true;
+// ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+// ImVec4 clear_color = ImVec4(0.75f, 0.58f, 0.80f, 1.00f);
+ImVec4 clear_color = ImVec4(0.675,0.918,0.651, 1.00f);
 int g_width;
 int g_height;
+
+// website view state
+bool show_demo_window         = true;
+bool show_another_window      = false;
+
+// website description state
+bool show_website_description = true;
 
 EM_JS(int, canvas_get_width, (), {
   return Module.canvas.width;
@@ -61,7 +65,10 @@ void loop()
 
   // 1. Show a simple window.
   // Tip: if we don't call ImGui::Begin()/ImGui::End() the widgets automatically appears in a window called "Debug".
-  {
+  bool test = true;
+  if (test) {
+      ImGui::SetNextWindowPos(ImVec2(1000, 100), ImGuiCond_FirstUseEver);
+      ImGui::Begin("test", &test);
       static float f = 0.0f;
       static int counter = 0;
       ImGui::Text("Hello, world!");                           // Display some text (you can use a format string too)
@@ -77,13 +84,11 @@ void loop()
       ImGui::Text("counter = %d", counter);
 
       ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+      ImGui::End();
   }
 
-  //std::cout << "2nd window" << std::endl;
-
   // 2. Show another simple window. In most cases you will use an explicit Begin/End pair to name your windows.
-  if (show_another_window)
-  {
+  if (show_another_window) {
       ImGui::Begin("Another Window", &show_another_window);
       ImGui::Text("Hello from another window!");
       if (ImGui::Button("Close Me"))
@@ -96,6 +101,37 @@ void loop()
   {
       ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiCond_FirstUseEver); // Normally user code doesn't need/want to call this because positions are saved in .ini file anyway. Here we just want to make the demo initial state a bit more friendly!
       ImGui::ShowDemoWindow(&show_demo_window);
+  }
+
+  if (show_website_description) {
+    ImGuiWindowFlags window_flags = 0 | ImGuiWindowFlags_NoScrollbar | !ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
+
+    ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(450, 300));
+    ImGui::Begin("About this site", NULL, window_flags);
+    ImGui::TextWrapped(
+      "Hello, and welcome to my website. This site is all about myself, so if you aren't interested in me, "
+      "then feel free to close this window!"
+      "\n\n"
+      "I will be using this site to showcase my work, and write about what i'm up to."
+      "\n\n"
+      "This site was implemented using imgui (an immediate mode gui library) and is running in WebAssembly (compiled using emcc), "
+      "so it is not like it is not like a traditional js/html/css website."
+    );
+    ImGui::End();
+    
+  }
+
+  //show a nice image
+  if (true) {
+    ImGuiWindowFlags window_flags = 0 | ImGuiWindowFlags_NoScrollbar | !ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
+    ImGui::SetNextWindowPos(ImVec2(100, 400), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(450, 320));
+    ImGui::Begin("Pretty image", NULL, window_flags);
+
+    // ImGui::Image()
+    
+    ImGui::End();
   }
 
   ImGui::Render();
@@ -134,7 +170,6 @@ int init_gl() {
 
   return 0;
 }
-
 
 int init_imgui() {
   // Setup Dear ImGui binding
