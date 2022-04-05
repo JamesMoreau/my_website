@@ -5,8 +5,9 @@
 #include <emscripten.h>
 #endif
 
-#define GLFW_INCLUDE_ES3
+// #define GLFW_INCLUDE_ES3
 #include <GLES3/gl3.h>
+// #include <OpenGL/gl3.h>
 #include <GLFW/glfw3.h>
 
 #include "imgui.h"
@@ -19,7 +20,8 @@
 
 // TODO:
 // [ ] Make local and web targets in makefile for easier testing.
-// [ ] Make 
+// [ ] Increase memory size to load larger images.
+//
 
 
 GLFWwindow* g_window;
@@ -159,16 +161,16 @@ void loop()
     ImGuiWindowFlags window_flags = 0 | ImGuiWindowFlags_NoScrollbar | !ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
 
     ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(450, 300));
+    ImGui::SetNextWindowSize(ImVec2(290, 300));
     ImGui::Begin("About this site", NULL, window_flags);
     ImGui::TextWrapped(
       "Hello, and welcome to my website. This site is all about myself, so if you aren't interested in me, "
       "then feel free to close this window!"
       "\n\n"
-      "I will be using this site to showcase my work, and write about what i'm up to."
+      "I use this site to showcase my work, and write about what i'm up to."
       "\n\n"
-      "This site was implemented using imgui (an immediate mode gui library) and is running in WebAssembly (compiled using emcc), "
-      "so it is not like it is not like a traditional js/html/css website."
+      "This site was implemented using imgui (an immediate mode graphics library) and is running in WebAssembly (compiled using emcscripten), "
+      "so it is not like it is not like a traditional js/html website."
     );
     ImGui::End();
     
