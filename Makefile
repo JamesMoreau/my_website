@@ -15,10 +15,10 @@ WEBGL_VER = -s USE_WEBGL2=1 -s USE_GLFW=3 -s FULL_ES3=1
 USE_WASM = -s WASM=1
 
 debug: $(SOURCES)
-	emcc $(SOURCES) -std=c++11 -o $(OUTPUT) $(LIBS) $(WEBGL_VER) $(USE_WASM) -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends -I$(STB_DIR) -O0 -g --memoryprofiler --preload-file data
+	emcc $(SOURCES) -std=c++11 -o $(OUTPUT) $(LIBS) $(WEBGL_VER) $(USE_WASM) -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends -I$(STB_DIR) -O0 -g --memoryprofiler --preload-file data -s ALLOW_MEMORY_GROWTH=1
 
 release: $(SOURCES)
-	emcc $(SOURCES) -std=c++11 -o $(OUTPUT) $(LIBS) $(WEBGL_VER) $(USE_WASM) -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends -I$(STB_DIR) -O3 -Oz -flto --preload-file data
+	emcc $(SOURCES) -std=c++11 -o $(OUTPUT) $(LIBS) $(WEBGL_VER) $(USE_WASM) -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends -I$(STB_DIR) -O3 -Oz -flto --preload-file data ALLOW_MEMORY_GROWTH=1
 
 run: 
 	# open -a "Google Chrome" http://localhost:8000/imgui.html

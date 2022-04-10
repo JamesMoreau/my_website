@@ -21,7 +21,8 @@
 // TODO:
 // [x] Make local and web targets in makefile for easier testing.
 // [ ] Increase memory size to load larger images.
-//
+// [ ] Add crypto links.
+// [ ] Add other links (ex. github).
 
 
 GLFWwindow* g_window;
@@ -40,11 +41,13 @@ bool show_another_window      = false;
 bool show_website_description = true;
 
 // my pretty image
-int my_image_width = 0;
-int my_image_height = 0;
-GLuint my_image_texture = 0;
-bool ret;
-// IM_ASSERT(ret);
+struct custom_image {
+  int my_image_width; 
+  int my_image_height; 
+  GLuint my_image_texture;
+  bool ret;
+};
+custom_image comfy_image = {0, 0, 0, false};
 
 
 EM_JS(int, canvas_get_width, (), {
@@ -190,9 +193,10 @@ void loop()
   }
 
   ImGui::Begin("OpenGL Texture Text");
-  ImGui::Text("pointer = %p", (void*)my_image_texture);
-  ImGui::Text("size = %d x %d", my_image_width, my_image_height);
-  ImGui::Image((void*)(intptr_t)my_image_texture, ImVec2(my_image_width, my_image_height));
+  ImGui::Text("pointer = %p", (void*)comfy_image.my_image_texture);
+  ImGui::Text("size = %d x %d", comfy_image.my_image_width, comfy_image.my_image_height);
+  // ImGui::Image((void*)(intptr_t)my_image_texture, ImVec2(my_image_width, my_image_height));
+  ImGui::Image((void*)(intptr_t)comfy_image.my_image_texture, ImVec2(400, 500));
   ImGui::End();
 
   ImGui::Render();
@@ -303,7 +307,7 @@ int init() {
   init_gl();
   init_imgui();
 
-  ret = LoadTextureFromFile("data/MyImage01.jpeg", &my_image_texture, &my_image_width, &my_image_height);
+  comfy_image.ret = LoadTextureFromFile("data/comfy.jpg", &comfy_image.my_image_texture, &comfy_image.my_image_width, &comfy_image.my_image_height);
   return 0;
 }
 
