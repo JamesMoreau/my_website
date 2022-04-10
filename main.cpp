@@ -37,9 +37,12 @@ int g_height;
 bool show_demo_window         = true;
 bool show_another_window      = false;
 bool show_comfy_image         = true;
-
-// website description state
+bool show_contact_info_window = true;
+bool show_crypto_window       = true;
 bool show_website_description = true;
+
+//common stuff
+ImGuiWindowFlags my_simple_window_flags = 0 | ImGuiWindowFlags_NoScrollbar | !ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
 
 // my comfy image
 struct custom_image {
@@ -51,7 +54,6 @@ struct custom_image {
   bool ret;
 };
 custom_image comfy_image = {0, 0, 1080/4, 1920/4, 0, false};
-
 
 EM_JS(int, canvas_get_width, (), {
   return Module.canvas.width;
@@ -164,11 +166,11 @@ void loop()
   }
 
   if (show_website_description) {
-    ImGuiWindowFlags window_flags = 0 | ImGuiWindowFlags_NoScrollbar | !ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
+    // ImGuiWindowFlags window_flags = 0 | ImGuiWindowFlags_NoScrollbar | !ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
 
     ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(290, 300));
-    ImGui::Begin("About This Site", NULL, window_flags);
+    ImGui::Begin("About This Site", NULL, my_simple_window_flags);
     ImGui::TextWrapped(
       "Hello, and welcome to my website. This site is all about myself, so if you aren't interested in me, "
       "then feel free to close this window!"
@@ -179,29 +181,24 @@ void loop()
       "so it is unlike traditional js/html websites."
     );
     ImGui::End();
-    
   }
 
-  //show a nice image
-  // if (true) {
-  //   ImGuiWindowFlags window_flags = 0 | ImGuiWindowFlags_NoScrollbar | !ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
-  //   ImGui::SetNextWindowPos(ImVec2(100, 400), ImGuiCond_FirstUseEver);
-  //   ImGui::SetNextWindowSize(ImVec2(450, 320));
-  //   ImGui::Begin("Pretty image", NULL, window_flags);
-
-  //   // ImGui::Image()
-    
-  //   ImGui::End();
-  // }
-
-
   if (show_comfy_image) {
-    ImGuiWindowFlags window_flags = 0 | ImGuiWindowFlags_NoScrollbar | !ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
     ImGui::SetNextWindowPos(ImVec2(85, 400), ImGuiCond_FirstUseEver);
-    ImGui::Begin("A Pretty Image", NULL, window_flags);
+    ImGui::Begin("A Pretty Image", NULL, my_simple_window_flags);
     // ImGui::Text("pointer = %p", (void*)comfy_image.my_image_texture);
     // ImGui::Text("size = %d x %d", comfy_image.width, comfy_image.height);
     ImGui::Image((void*)(intptr_t)comfy_image.my_image_texture, ImVec2(comfy_image.draw_height, comfy_image.draw_width));
+    ImGui::End();
+  }
+
+  if (show_crypto_window) {
+    ImGui::Begin("My crypto links", NULL, my_simple_window_flags);
+    ImGui::End();
+  }
+
+  if (show_contact_info_window) {
+    ImGui::Begin("My other info", NULL, my_simple_window_flags);
     ImGui::End();
   }
 
