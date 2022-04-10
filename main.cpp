@@ -20,7 +20,7 @@
 
 // TODO:
 // [x] Make local and web targets in makefile for easier testing.
-// [ ] Increase memory size to load larger images.
+// [x] Increase memory size to load larger images.
 // [ ] Add crypto links.
 // [ ] Add other links (ex. github).
 
@@ -36,18 +36,21 @@ int g_height;
 // website view state
 bool show_demo_window         = true;
 bool show_another_window      = false;
+bool show_comfy_image         = true;
 
 // website description state
 bool show_website_description = true;
 
-// my pretty image
+// my comfy image
 struct custom_image {
-  int my_image_width; 
-  int my_image_height; 
+  int width; 
+  int height; 
+  int draw_width;
+  int draw_height;
   GLuint my_image_texture;
   bool ret;
 };
-custom_image comfy_image = {0, 0, 0, false};
+custom_image comfy_image = {0, 0, 1080/4, 1920/4, 0, false};
 
 
 EM_JS(int, canvas_get_width, (), {
@@ -107,7 +110,6 @@ void loop()
 {
   int width = canvas_get_width();
   int height = canvas_get_height();
-
   if (width != g_width || height != g_height)
   {
     g_width = width;
@@ -181,23 +183,27 @@ void loop()
   }
 
   //show a nice image
-  if (true) {
-    ImGuiWindowFlags window_flags = 0 | ImGuiWindowFlags_NoScrollbar | !ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
-    ImGui::SetNextWindowPos(ImVec2(100, 400), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(450, 320));
-    ImGui::Begin("Pretty image", NULL, window_flags);
+  // if (true) {
+  //   ImGuiWindowFlags window_flags = 0 | ImGuiWindowFlags_NoScrollbar | !ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
+  //   ImGui::SetNextWindowPos(ImVec2(100, 400), ImGuiCond_FirstUseEver);
+  //   ImGui::SetNextWindowSize(ImVec2(450, 320));
+  //   ImGui::Begin("Pretty image", NULL, window_flags);
 
-    // ImGui::Image()
+  //   // ImGui::Image()
     
+  //   ImGui::End();
+  // }
+
+
+  if (show_comfy_image) {
+    ImGuiWindowFlags window_flags = 0 | ImGuiWindowFlags_NoScrollbar | !ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
+    ImGui::SetNextWindowPos(ImVec2(85, 400), ImGuiCond_FirstUseEver);
+    ImGui::Begin("A Pretty Image", NULL, window_flags);
+    // ImGui::Text("pointer = %p", (void*)comfy_image.my_image_texture);
+    // ImGui::Text("size = %d x %d", comfy_image.width, comfy_image.height);
+    ImGui::Image((void*)(intptr_t)comfy_image.my_image_texture, ImVec2(comfy_image.draw_height, comfy_image.draw_width));
     ImGui::End();
   }
-
-  ImGui::Begin("OpenGL Texture Text");
-  ImGui::Text("pointer = %p", (void*)comfy_image.my_image_texture);
-  ImGui::Text("size = %d x %d", comfy_image.my_image_width, comfy_image.my_image_height);
-  // ImGui::Image((void*)(intptr_t)my_image_texture, ImVec2(my_image_width, my_image_height));
-  ImGui::Image((void*)(intptr_t)comfy_image.my_image_texture, ImVec2(400, 500));
-  ImGui::End();
 
   ImGui::Render();
 
@@ -307,7 +313,7 @@ int init() {
   init_gl();
   init_imgui();
 
-  comfy_image.ret = LoadTextureFromFile("data/comfy.jpg", &comfy_image.my_image_texture, &comfy_image.my_image_width, &comfy_image.my_image_height);
+  comfy_image.ret = LoadTextureFromFile("data/comfy.jpg", &comfy_image.my_image_texture, &comfy_image.width, &comfy_image.height);
   return 0;
 }
 

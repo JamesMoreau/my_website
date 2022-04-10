@@ -18,7 +18,7 @@ debug: $(SOURCES)
 	emcc $(SOURCES) -std=c++11 -o $(OUTPUT) $(LIBS) $(WEBGL_VER) $(USE_WASM) -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends -I$(STB_DIR) -O0 -g --memoryprofiler --preload-file data -s ALLOW_MEMORY_GROWTH=1
 
 release: $(SOURCES)
-	emcc $(SOURCES) -std=c++11 -o $(OUTPUT) $(LIBS) $(WEBGL_VER) $(USE_WASM) -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends -I$(STB_DIR) -O3 -Oz -flto --preload-file data ALLOW_MEMORY_GROWTH=1
+	emcc $(SOURCES) -std=c++11 -o $(OUTPUT) $(LIBS) $(WEBGL_VER) $(USE_WASM) -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends -I$(STB_DIR) -O3 -Oz -flto --preload-file data -s ALLOW_MEMORY_GROWTH=1
 
 run: 
 	# open -a "Google Chrome" http://localhost:8000/imgui.html
