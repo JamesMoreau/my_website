@@ -171,7 +171,7 @@ void loop()
       "I use this site to showcase my work, and write about what i'm up to."
       "\n\n"
       "This site was implemented using imgui (an immediate mode graphics library) and is running in WebAssembly (compiled using emcscripten), "
-      "so it is not like it is not like a traditional js/html website."
+      "so it is unlike traditional js/html websites."
     );
     ImGui::End();
     

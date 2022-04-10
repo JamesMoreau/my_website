@@ -35,3 +35,5 @@
 #custom
 .vscode/**
 .DS_Store
+imgui.js
+imgui.wasm

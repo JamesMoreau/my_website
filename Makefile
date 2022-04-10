@@ -3,6 +3,7 @@ OUTPUT     = imgui.js
 LIB_DIR   := lib
 IMGUI_DIR := lib/imgui
 STB_DIR   := lib/stb
+BIN       := bin
 
 SOURCES =  main.cpp
 SOURCES += $(IMGUI_DIR)/backends/imgui_impl_glfw.cpp $(IMGUI_DIR)/backends/imgui_impl_opengl3.cpp
@@ -19,12 +20,14 @@ debug: $(SOURCES)
 release: $(SOURCES)
 	emcc $(SOURCES) -std=c++11 -o $(OUTPUT) $(LIBS) $(WEBGL_VER) $(USE_WASM) -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends -I$(STB_DIR) -O3 -Oz -flto --preload-file data
 
-
 run: 
+	# open -a "Google Chrome" http://localhost:8000/imgui.html
 	python -m SimpleHTTPServer 8000
-
+	
 clean:
 	rm -f $(OUTPUT)
+	rm -f imgui.wasm
+	rm -f imgui.data
 
 # all: $(SOURCES) $(OUTPUT)
 
