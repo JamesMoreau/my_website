@@ -19,7 +19,7 @@
 #include "stb_image.h"
 
 // TODO:
-// [ ] Make local and web targets in makefile for easier testing.
+// [x] Make local and web targets in makefile for easier testing.
 // [ ] Increase memory size to load larger images.
 //
 
@@ -27,7 +27,8 @@
 GLFWwindow* g_window;
 // ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 // ImVec4 clear_color = ImVec4(0.75f, 0.58f, 0.80f, 1.00f);
-ImVec4 clear_color = ImVec4(0.675,0.918,0.651, 1.00f);
+// ImVec4 clear_color = ImVec4(0.675f, 0.918f, 0.651, 1.00f);
+auto clear_color = ImVec4(0.98f, 1.00f, 0.75f, 1.00f);
 int g_width;
 int g_height;
 
@@ -162,7 +163,7 @@ void loop()
 
     ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(290, 300));
-    ImGui::Begin("About this site", NULL, window_flags);
+    ImGui::Begin("About This Site", NULL, window_flags);
     ImGui::TextWrapped(
       "Hello, and welcome to my website. This site is all about myself, so if you aren't interested in me, "
       "then feel free to close this window!"
