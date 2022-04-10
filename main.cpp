@@ -34,7 +34,7 @@ int g_width;
 int g_height;
 
 // website view state
-bool show_demo_window         = true;
+bool show_demo_window         = false;
 bool show_another_window      = false;
 bool show_comfy_image         = true;
 bool show_contact_info_window = true;
@@ -55,6 +55,7 @@ struct custom_image {
 };
 custom_image comfy_image = {0, 0, 1080/4, 1920/4, 0, false};
 
+// custom js 
 EM_JS(int, canvas_get_width, (), {
   return Module.canvas.width;
 });
@@ -65,6 +66,14 @@ EM_JS(int, canvas_get_height, (), {
 
 EM_JS(void, resizeCanvas, (), {
   js_resizeCanvas();
+});
+
+EM_JS(void, open_url, (const char* link), {
+  window.open(UTF8ToString(link));
+})
+
+EM_JS(void, print_to_console, (const char* str), {
+  console.log(UTF8ToString(str));
 });
 
 // Simple helper function to load an image into a OpenGL texture with common settings
@@ -169,7 +178,7 @@ void loop()
     // ImGuiWindowFlags window_flags = 0 | ImGuiWindowFlags_NoScrollbar | !ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
 
     ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(290, 300));
+    ImGui::SetNextWindowSize(ImVec2(290, 275));
     ImGui::Begin("About This Site", NULL, my_simple_window_flags);
     ImGui::TextWrapped(
       "Hello, and welcome to my website. This site is all about myself, so if you aren't interested in me, "
@@ -180,6 +189,12 @@ void loop()
       "This site was implemented using imgui (an immediate mode graphics library) and is running in WebAssembly (compiled using emcscripten), "
       "so it is unlike traditional js/html websites."
     );
+
+    ImGui::Dummy(ImVec2(0.0f, 20.0f));
+
+    if (ImGui::Button("Open Imgui Demo"))
+      show_demo_window = !show_demo_window;
+    
     ImGui::End();
   }
 
@@ -194,11 +209,20 @@ void loop()
 
   if (show_crypto_window) {
     ImGui::Begin("My crypto links", NULL, my_simple_window_flags);
+    ImGui::TextWrapped("fdfads");
+
     ImGui::End();
   }
 
   if (show_contact_info_window) {
-    ImGui::Begin("My other info", NULL, my_simple_window_flags);
+    ImGui::Begin("My Other info", NULL, my_simple_window_flags);
+    
+    if (ImGui::Button("Github"))
+      open_url("https://github.com/JamesMoreau");
+
+    if (ImGui::Button("My Website"))
+      open_url("http://localhost:8000/imgui.html");
+
     ImGui::End();
   }
 
@@ -306,11 +330,15 @@ int init_imgui() {
   return 0;
 }
 
+void load_custom_images() {
+  comfy_image.ret = LoadTextureFromFile("data/comfy.jpg", &comfy_image.my_image_texture, &comfy_image.width, &comfy_image.height);
+
+}
+
 int init() {
   init_gl();
   init_imgui();
-
-  comfy_image.ret = LoadTextureFromFile("data/comfy.jpg", &comfy_image.my_image_texture, &comfy_image.width, &comfy_image.height);
+  load_custom_images();
   return 0;
 }
 
