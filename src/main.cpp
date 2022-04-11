@@ -18,11 +18,14 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#include "JS_calls.h"
+
 // TODO:
 // [x] Make local and web targets in makefile for easier testing.
 // [x] Increase memory size to load larger images.
-// [ ] Add crypto links.
+// [ ] Add crypto links. Make it a button so it opens a 
 // [ ] Add other links (ex. github).
+// [ ] Add floating spinning guy.
 
 
 GLFWwindow* g_window;
@@ -38,8 +41,9 @@ bool show_demo_window         = false;
 bool show_another_window      = false;
 bool show_comfy_image         = true;
 bool show_contact_info_window = true;
-bool show_crypto_window       = true;
+bool show_crypto_window       = false;
 bool show_website_description = true;
+bool show_coop_window         = true;
 
 //common stuff
 ImGuiWindowFlags my_simple_window_flags = 0 | ImGuiWindowFlags_NoScrollbar | !ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
@@ -50,31 +54,14 @@ struct custom_image {
   int height; 
   int draw_width;
   int draw_height;
-  GLuint my_image_texture;
+  GLuint texture;
   bool ret;
 };
 custom_image comfy_image = {0, 0, 1080/4, 1920/4, 0, false};
-
-// custom js 
-EM_JS(int, canvas_get_width, (), {
-  return Module.canvas.width;
-});
-
-EM_JS(int, canvas_get_height, (), {
-  return Module.canvas.height;
-});
-
-EM_JS(void, resizeCanvas, (), {
-  js_resizeCanvas();
-});
-
-EM_JS(void, open_url, (const char* link), {
-  window.open(UTF8ToString(link));
-})
-
-EM_JS(void, print_to_console, (const char* str), {
-  console.log(UTF8ToString(str));
-});
+custom_image github = {0, 0, 20, 20, 0, false};
+custom_image email = {0, 0, 20, 20, 0, false};
+custom_image home = {0, 0, 20, 20, 0, false};
+custom_image linkedin = {0, 0, 20, 20, 0, false};
 
 // Simple helper function to load an image into a OpenGL texture with common settings
 bool LoadTextureFromFile(const char* filename, GLuint* out_texture, int* out_width, int* out_height)
@@ -117,8 +104,7 @@ void on_size_changed() {
   ImGui::SetCurrentContext(ImGui::GetCurrentContext());
 }
 
-void loop()
-{
+void loop() {
   int width = canvas_get_width();
   int height = canvas_get_height();
   if (width != g_width || height != g_height)
@@ -134,8 +120,6 @@ void loop()
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
 
-  // 1. Show a simple window.
-  // Tip: if we don't call ImGui::Begin()/ImGui::End() the widgets automatically appears in a window called "Debug".
   bool test = true;
   if (test) {
       ImGui::SetNextWindowPos(ImVec2(1000, 100), ImGuiCond_FirstUseEver);
@@ -158,7 +142,6 @@ void loop()
       ImGui::End();
   }
 
-  // 2. Show another simple window. In most cases you will use an explicit Begin/End pair to name your windows.
   if (show_another_window) {
       ImGui::Begin("Another Window", &show_another_window);
       ImGui::Text("Hello from another window!");
@@ -167,7 +150,6 @@ void loop()
       ImGui::End();
   }
 
-  // 3. Show the ImGui demo window. Most of the sample code is in ImGui::ShowDemoWindow(). Read its code to learn more about Dear ImGui!
   if (show_demo_window)
   {
       ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiCond_FirstUseEver); // Normally user code doesn't need/want to call this because positions are saved in .ini file anyway. Here we just want to make the demo initial state a bit more friendly!
@@ -175,10 +157,8 @@ void loop()
   }
 
   if (show_website_description) {
-    // ImGuiWindowFlags window_flags = 0 | ImGuiWindowFlags_NoScrollbar | !ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
-
     ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(290, 275));
+    ImGui::SetNextWindowSize(ImVec2(340, 300));
     ImGui::Begin("About This Site", NULL, my_simple_window_flags);
     ImGui::TextWrapped(
       "Hello, and welcome to my website. This site is all about myself, so if you aren't interested in me, "
@@ -186,7 +166,7 @@ void loop()
       "\n\n"
       "I use this site to showcase my work, and write about what i'm up to."
       "\n\n"
-      "This site was implemented using imgui (an immediate mode graphics library) and is running in WebAssembly (compiled using emcscripten), "
+      "This site was implemented using imgui (an immediate mode graphics library) and is running in WebAssembly (compiled using emscripten), "
       "so it is unlike traditional js/html websites."
     );
 
@@ -194,6 +174,11 @@ void loop()
 
     if (ImGui::Button("Open Imgui Demo"))
       show_demo_window = !show_demo_window;
+
+
+    ImGui::ColorEdit4("clear color", (float*)&clear_color, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel | ImGuiColorEditFlags_NoOptions | ImGuiColorEditFlags_NoDragDrop);
+    ImGui::SameLine();
+    ImGui::Text("Change the background color!");
     
     ImGui::End();
   }
@@ -201,9 +186,9 @@ void loop()
   if (show_comfy_image) {
     ImGui::SetNextWindowPos(ImVec2(85, 400), ImGuiCond_FirstUseEver);
     ImGui::Begin("A Pretty Image", NULL, my_simple_window_flags);
-    // ImGui::Text("pointer = %p", (void*)comfy_image.my_image_texture);
+    // ImGui::Text("pointer = %p", (void*)comfy_image.texture);
     // ImGui::Text("size = %d x %d", comfy_image.width, comfy_image.height);
-    ImGui::Image((void*)(intptr_t)comfy_image.my_image_texture, ImVec2(comfy_image.draw_height, comfy_image.draw_width));
+    ImGui::Image((void*)(intptr_t)comfy_image.texture, ImVec2(comfy_image.draw_height, comfy_image.draw_width));
     ImGui::End();
   }
 
@@ -215,15 +200,34 @@ void loop()
   }
 
   if (show_contact_info_window) {
+    ImGui::SetNextWindowPos(ImVec2(400, 50), ImGuiCond_FirstUseEver);
     ImGui::Begin("My Other info", NULL, my_simple_window_flags);
+
+    ImGui::Image((void*)(intptr_t)email.texture, ImVec2(email.draw_height, email.draw_width));
+    ImGui::SameLine();
+    ImGui::Text("jmorea03@uoguelph.ca");
     
+    ImGui::Image((void*)(intptr_t)github.texture, ImVec2(github.draw_height, github.draw_width));
+    ImGui::SameLine();
     if (ImGui::Button("Github"))
       open_url("https://github.com/JamesMoreau");
 
+    // ImGui::Dummy(ImVec2(20, 20));
+    ImGui::Image((void*)(intptr_t)home.texture, ImVec2(home.draw_height, home.draw_width));
+    ImGui::SameLine();
     if (ImGui::Button("My Website"))
       open_url("http://localhost:8000/imgui.html");
 
+    ImGui::Image((void*)(intptr_t)linkedin.texture, ImVec2(linkedin.draw_height, linkedin.draw_width));
+    ImGui::SameLine();
+    if (ImGui::Button("LinkedIn"))
+      open_url("https://www.linkedin.com/in/james-moreau/");
+
     ImGui::End();
+  }
+
+  if (show_coop_window) {
+
   }
 
   ImGui::Render();
@@ -331,8 +335,11 @@ int init_imgui() {
 }
 
 void load_custom_images() {
-  comfy_image.ret = LoadTextureFromFile("data/comfy.jpg", &comfy_image.my_image_texture, &comfy_image.width, &comfy_image.height);
-
+  comfy_image.ret = LoadTextureFromFile("data/comfy.jpg", &comfy_image.texture, &comfy_image.width, &comfy_image.height);
+  github.ret = LoadTextureFromFile("data/github.png", &github.texture, &github.width, &github.height);
+  email.ret = LoadTextureFromFile("data/email.png", &email.texture, &email.width, &email.height);
+  home.ret = LoadTextureFromFile("data/home.png", &home.texture, &home.width, &home.height);
+  home.ret = LoadTextureFromFile("data/linkedin.png", &linkedin.texture, &linkedin.width, &linkedin.height);
 }
 
 int init() {
