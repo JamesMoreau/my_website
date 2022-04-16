@@ -44,6 +44,7 @@ bool show_contact_info_window = true;
 bool show_crypto_window       = false;
 bool show_website_description = true;
 bool show_coop_window         = true;
+bool show_test_window         = true;
 
 //common stuff
 ImGuiWindowFlags my_simple_window_flags = 0 | ImGuiWindowFlags_NoScrollbar | !ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
@@ -120,10 +121,10 @@ void loop() {
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
 
-  bool test = true;
-  if (test) {
+
+  if (show_test_window) {
       ImGui::SetNextWindowPos(ImVec2(1000, 100), ImGuiCond_FirstUseEver);
-      ImGui::Begin("test", &test);
+      ImGui::Begin("test", &show_test_window);
       static float f = 0.0f;
       static int counter = 0;
       ImGui::Text("Hello, world!");                           // Display some text (you can use a format string too)
@@ -134,7 +135,7 @@ void loop() {
       ImGui::Checkbox("Another Window", &show_another_window);
 
       if (ImGui::Button("Button"))                            // Buttons return true when clicked (NB: most widgets return true when edited/activated)
-          counter++;
+        counter++;
       ImGui::SameLine();
       ImGui::Text("counter = %d", counter);
 
@@ -143,15 +144,14 @@ void loop() {
   }
 
   if (show_another_window) {
-      ImGui::Begin("Another Window", &show_another_window);
-      ImGui::Text("Hello from another window!");
-      if (ImGui::Button("Close Me"))
-          show_another_window = false;
-      ImGui::End();
+    ImGui::Begin("Another Window", &show_another_window);
+    ImGui::Text("Hello from another window!");
+    if (ImGui::Button("Close Me"))
+        show_another_window = false;
+    ImGui::End();
   }
 
-  if (show_demo_window)
-  {
+  if (show_demo_window) {
       ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiCond_FirstUseEver); // Normally user code doesn't need/want to call this because positions are saved in .ini file anyway. Here we just want to make the demo initial state a bit more friendly!
       ImGui::ShowDemoWindow(&show_demo_window);
   }
@@ -172,19 +172,19 @@ void loop() {
 
     ImGui::Dummy(ImVec2(0.0f, 20.0f));
 
-    if (ImGui::Button("Open Imgui Demo"))
-      show_demo_window = !show_demo_window;
-
-
     ImGui::ColorEdit4("clear color", (float*)&clear_color, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel | ImGuiColorEditFlags_NoOptions | ImGuiColorEditFlags_NoDragDrop);
     ImGui::SameLine();
     ImGui::Text("Change the background color!");
     
+    if (ImGui::Button("Open Imgui Demo"))
+      show_demo_window = !show_demo_window;
+
+    ImGui::Text("Try moving around some windows.");
     ImGui::End();
   }
 
   if (show_comfy_image) {
-    ImGui::SetNextWindowPos(ImVec2(85, 400), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowPos(ImVec2(85, 450), ImGuiCond_FirstUseEver);
     ImGui::Begin("A Pretty Image", NULL, my_simple_window_flags);
     // ImGui::Text("pointer = %p", (void*)comfy_image.texture);
     // ImGui::Text("size = %d x %d", comfy_image.width, comfy_image.height);
@@ -200,8 +200,8 @@ void loop() {
   }
 
   if (show_contact_info_window) {
-    ImGui::SetNextWindowPos(ImVec2(400, 50), ImGuiCond_FirstUseEver);
-    ImGui::Begin("My Other info", NULL, my_simple_window_flags);
+    ImGui::SetNextWindowPos(ImVec2(1650, 50), ImGuiCond_FirstUseEver);
+    ImGui::Begin("My Other Info", NULL, my_simple_window_flags);
 
     ImGui::Image((void*)(intptr_t)email.texture, ImVec2(email.draw_height, email.draw_width));
     ImGui::SameLine();
@@ -227,7 +227,113 @@ void loop() {
   }
 
   if (show_coop_window) {
+    ImGui::SetNextWindowPos(ImVec2(1000, 50), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(700, 700), ImGuiCond_FirstUseEver);
 
+    ImGui::Begin("Co-op Experience");
+
+    if (ImGui::CollapsingHeader("Fall 2020 Co-op work term report")) {
+      ImGui::TextWrapped(
+        "This fall I have had the fortune of having been invited to work remotely for the Co-operators as a test automation developer. "
+        "This blog will serve as a journal to myself and others about my experience as a Co-op student. Hopefully, this blog will act as "
+        "a time capsule to observe my progression in terms of knowledge and skills, as well as the development of my professional career."
+        "\n\n"
+        "My employer, The Co-operators Group Limited is a leading Canadian multi-line insurance and financial services co-operative with "
+        "$47.3 billion in assets under management. I worked at a local Guelph branch in the Quality Assurance team under the Information "
+        "Technology department. Since it's founding in 1945, the co-operators now offers home, business, life, farm, and travel insurance "
+        "to many Canadians."
+        "\n\n"
+        "This was my first co-op, which also happened to be completely remote, so my expectations as far as what I was going to be learning -- "
+        "that is, technologies, insurance practices, etc. -- were modest. I created a list earlier on my work term outlining the goals/learning "
+        "outcomes I had in mind."
+        "\n\n"
+        "1. I would like to improve my oral communication in team meetings and in one-on-one."
+        "\n"
+        "2. I want to become more familiar with git. Specifically the advanced branching features."
+        "\n"
+        "3. I want to maintain a daily agenda to record my ideas, tasks, notes, etc. to have a more organized and efficient workday."
+        "\n\n"
+        );
+      ImGui::TextWrapped( // for some reason there is a character limit on TextWrapped so I am making multiple calls.
+        "When I applied for this job, though previous classes had prepared me to the best of their ability, I have had little practice working in "
+        "a professional environment on a development team. My hopes were to gain hands-on experience working with a pre-existing codebase composed "
+        "of multiple coupled technologies to acquire a holistic experience of software development. I was fortunate to work on the QA team where I "
+        "obtained skills that will benefit me in future work experiences."
+        "\n\n"
+        "Looking back at the goals I outlined, I would say that for the most part, they have been successfully accomplished. For oral communication "
+        "I frequently asked questions when confused; I even got to lead a scrum meeting one time. For becoming more familiar with and using advanced "
+        "functionality of git source control, I worked with multiple repositories and created product features using branches and merging. "
+        "With maintaining a daily agenda, I kept one next to me every day; It is pretty full now. While I can say that I have been taking notes when "
+        "I feel the need to, I don't do it every day."
+        "\n\n"
+        "I worked on the quality assurance team and our job was to ensure that changes made to the backend of Policy Center (this is where insurance "
+        "underwriters go to create an insurance policy for a client) by other development teams did not create problems for production users. To accomplish "
+        "my daily tasks, I worked with a variety of technologies including Guidewire PolicyCenter, QTP (Micro Focus Unified Functional Testing), Selenium, "
+        "and Java programming. Most of the programming practice I had already come from schooling. This served as a good basis, however, I learned a lot of "
+        "what I ended up working on while on the job, with the help of co-workers. One example task I would be assigned to is called \"regression testing\". "
+        "For this task, which we would do every few weeks, I would run our suite of test cases that we had for the auto insurance product, then report on any "
+        "errors and ensure that the policies created matched in different environments. This task called on a number of my skills such as teamwork, defect (bug) "
+        "analysis, reporting."
+        "\n\n"
+        "I really enjoyed my time at The Co-operators. I wish I could spend more time working here but school is calling me back! Hopefully, I will have a "
+        "chance in the future to come back and do another work term. Maybe next time I could actually join the team in the office."
+        "\n\n"
+        "I would like to thank Emil Sathiya and the rest of my team for having patience and helping me learn so much in such little time under these circumstances."
+        "\n\n"
+      );
+    }
+
+    if (ImGui::CollapsingHeader("Summer 2021 Co-op Work Term Report")) {
+      ImGui::TextWrapped(
+        "This summer I had the opportunity to work at Purolator's Digital Lab, where I worked on quality assurance for a new application under development that "
+        "will help partners of Purolator manage their parcel delivery. Founded in 1960, Purolator is a Canadian courier that delivers parcels to Canadians all around "
+        "the country. Purolator is at the forefront of technological research and development. Currently they are looking into engineering their fleet to make "
+        "deliveries easier and faster for the workers, while also reducing emissions (here's a great video to show what I'm talking about: link). I was very excited "
+        "to be a part of such an innovative company."
+        "\n\n"
+        "It's kind of a funny story, actually. I had applied to and done an interview with another courier by the name of Shipperbee, which was based in Guelph. "
+        "This company was acquired by Purolator just after they had hired me. Luckily, my boss negotiated that Co-ops would be transferred over (thanks, Dariusz!)."
+        "This was my second fully remote Co-op term so the experience wasn't that alien to me. I was already used to doing scrums over video chat. I have a pretty "
+        "good setup here at home. And I got a nice mac laptop sent to me so the work-from-home was comfortable. Although, for a future Co-op term I would still like "
+        "to try working in an office environment."
+        "\n\n"
+        "The work term goals were chosen partly from what I think I missed out on last Co-op term and partly what I think would be a good opportunity at this specific "
+        "employment. Anyway, the goals I outlined at the beginning of the term are as follows:"
+        "\n\n"
+        "1. I want to learn more about microservices and deployment in modern software development."
+        "\n"
+        "2. I want to maintain a daily agenda to record my ideas, tasks, notes, etc. to have a more organized and efficient workday."
+        "\n"
+        "3. I should be able to work effectively on my own without requiring too much assistance from or asking questions of co-workers."
+        "\n"
+      );
+      ImGui::TextWrapped( //same thing as above
+        "On the topic of my day-to-day work, without getting too specific (I think I signed an NDA), I worked with a great team of developers and QA testers on testing "
+        "a new mobile application. My hours were 9-5:30 every day. I mainly worked with 2 others in the QA team. My most common work item was to re-test a filed bug on "
+        "multiple devices/platforms to ensure that the issue was fixed. In terms of our testing strategies, we did manual testing, automation testing, and API testing. "
+        "Doing testing at multiple \"levels\" is advantageous because you are more likely to catch bugs; like in any field of engineering, the weakest points are the "
+        "moving parts, so that's where we look first. Aside from testing, we worked on documentation and task management (Azure). During my work term, I feel like I made "
+        "good contributions to tooling and testing utilities used by Digital lab, that can be used and built upon in the future by other developers."
+        "\n\n"
+        "I would say my academics have helped me to acclimate to a professional tech environment. I think I have strong technical knowledge, which helps me understand when "
+        "I am testing an issue what is happening behind the scenes. However, I would also say that during my time at Purolator, I've acquired a lot of technical knowledge "
+        "about the architecture of modern mobile applications, web microservices, and the continuous integration and deployment model. The hard and soft skills I gained "
+        "here will make me a more well-rounded person who is capable of working well with other teams/members who are focused on their slice of the software stack."
+        "\n\n"
+        "Overall, I would say that from what I have learned over the course of the last few months has made me more confident in abilities as a software developer. "
+        "I would definitely be interested in coming back to Purolator in the future if that is a possibility."
+        "\n\n"
+        "Acknowledgments:"
+        "\n"
+        "Thanks to the great QA team, Pooja and Emma."
+        "\n"
+        "Thanks to my boss, Dariusz, and the rest of the team."
+        "\n\n"
+      );
+    }
+
+
+    ImGui::End();
   }
 
   ImGui::Render();
@@ -243,7 +349,6 @@ void loop() {
   glfwMakeContextCurrent(g_window);
 }
 
-
 int init_gl() {
   if (!glfwInit()) {
       fprintf( stderr, "Failed to initialize GLFW\n" );
@@ -256,7 +361,7 @@ int init_gl() {
   // Open a window and create its OpenGL context
   int canvasWidth = 800;
   int canvasHeight = 600;
-  g_window = glfwCreateWindow( canvasWidth, canvasHeight, "WebGui Demo", NULL, NULL);
+  g_window = glfwCreateWindow(canvasWidth, canvasHeight, "WebGui Demo", NULL, NULL);
   if (!g_window) {
     fprintf( stderr, "Failed to open GLFW window.\n" );
     glfwTerminate();
