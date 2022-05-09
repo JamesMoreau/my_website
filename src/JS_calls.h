@@ -29,3 +29,13 @@ EM_JS(void, open_url, (const char* link), {
 EM_JS(void, print_to_console, (const char* str), {
   console.log(UTF8ToString(str));
 });
+
+EM_JS(void, copy_string_clipboard, (const char* str), {
+  try {
+    let s = UTF8ToString(str);
+    navigator.clipboard.writeText(location.href);
+    console.log(`Copied '${s}' to clipboard!`);
+  } catch (err) {
+    console.error(`Failed to copy '${s}' to clipboard!`);
+  }
+}); 

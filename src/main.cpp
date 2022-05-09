@@ -68,10 +68,22 @@ custom_image email = {0, 0, 20, 20, 0, false};
 custom_image home = {0, 0, 20, 20, 0, false};
 custom_image linkedin = {0, 0, 20, 20, 0, false};
 custom_image journal = {0, 0, 20, 20, 0, false};
+custom_image crypto = {0, 0, 20, 20, 0, false};
 
 //coop term reports
 char* summer_2021_report;
 char* fall_2020_report;
+
+const char* bitcoin_address = "bc1q5lqcyw8dwf0y9k22syjd03p0cmq6d37c5m3h7c";
+
+// Simple helper to draw text centered in a window.
+void TextCentered(std::string text) {
+    auto windowWidth = ImGui::GetWindowSize().x;
+    auto textWidth   = ImGui::CalcTextSize(text.c_str()).x;
+
+    ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
+    ImGui::Text("%s", text.c_str());
+}
 
 // Simple helper function to load an image into a OpenGL texture with common settings
 bool LoadTextureFromFile(const char* filename, GLuint* out_texture, int* out_width, int* out_height)
@@ -202,8 +214,21 @@ void loop() {
   }
 
   if (show_crypto_window) {
+    ImGui::SetNextWindowPos(ImVec2(750, 200), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(500, 500));
     ImGui::Begin("My crypto links", NULL, my_simple_window_flags);
-    ImGui::TextWrapped("fdfads");
+    ImGui::Text("Give me money!");
+
+    ImGui::Separator();
+
+    TextCentered("Bitcoin");
+    ImGui::Text("Address: "); ImGui::SameLine(); ImGui::TextColored(ImVec4(1.0f, 0.0f, 1.0f, 1.0f), "%s", bitcoin_address);
+    //icon button copy text (make this general use)
+    //QR code image.
+
+    ImGui::Separator();
+
+    ImGui::Text("Monero: 8QK6K7XKrNVnFzCP9SVj3nf");
 
     ImGui::End();
   }
@@ -236,6 +261,11 @@ void loop() {
     ImGui::SameLine();
     if (ImGui::Button("Co-op work terms")) 
       show_coop_window = !show_coop_window;
+
+    ImGui::Image((void*)(intptr_t)crypto.texture, ImVec2(crypto.draw_height, crypto.draw_width));
+    ImGui::SameLine();
+    if (ImGui::Button("Crypto"))
+      show_crypto_window = !show_crypto_window;
 
     ImGui::End();
   }
@@ -399,6 +429,7 @@ void load_custom_images() {
   home.ret        = LoadTextureFromFile("data/home.png",     &home.texture,        &home.width,        &home.height);
   linkedin.ret    = LoadTextureFromFile("data/linkedin.png", &linkedin.texture,    &linkedin.width,    &linkedin.height);
   journal.ret     = LoadTextureFromFile("data/journal.png",  &journal.texture,     &journal.width,     &journal.height);
+  crypto.ret      = LoadTextureFromFile("data/crypto.png",   &crypto.texture,      &crypto.width,      &crypto.height);
 }
 
 int init() {
