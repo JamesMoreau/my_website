@@ -69,6 +69,8 @@ custom_image home = {0, 0, 20, 20, 0, false};
 custom_image linkedin = {0, 0, 20, 20, 0, false};
 custom_image journal = {0, 0, 20, 20, 0, false};
 custom_image crypto = {0, 0, 20, 20, 0, false};
+custom_image bitcoin_qr = {0, 0, 450/2, 450/2, 0, false};
+custom_image copy =  {0, 0, 20, 20, 0, false};
 
 //coop term reports
 char* summer_2021_report;
@@ -216,20 +218,38 @@ void loop() {
   if (show_crypto_window) {
     ImGui::SetNextWindowPos(ImVec2(750, 200), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(500, 500));
-    ImGui::Begin("My crypto links", NULL, my_simple_window_flags);
+    ImGui::Begin("My Crypto Links", NULL, my_simple_window_flags);
     ImGui::Text("Give me money!");
 
     ImGui::Separator();
 
-    TextCentered("Bitcoin");
-    ImGui::Text("Address: "); ImGui::SameLine(); ImGui::TextColored(ImVec4(1.0f, 0.0f, 1.0f, 1.0f), "%s", bitcoin_address);
-    //icon button copy text (make this general use)
-    //QR code image.
+    auto windowWidth = ImGui::GetWindowSize().x;
 
+    ImGui::AlignTextToFramePadding();
+    ImGui::Text("Bitcoin: ");
+    ImGui::SameLine();
+    ImGui::PushStyleColor(ImGuiCol_Button,        (ImVec4)ImColor::HSV(0, 0.6f, 0.6f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0, 0.7f, 0.7f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive,  (ImVec4)ImColor::HSV(0, 0.8f, 0.8f));
+    if (ImGui::Button(bitcoin_address)) copy_string_to_clipboard(bitcoin_address);
+    ImGui::PopStyleColor(3);
+    ImGui::SameLine();
+    if (ImGui::ImageButton((void*)(intptr_t)copy.texture, ImVec2(copy.draw_height, copy.draw_width))) copy_string_to_clipboard(bitcoin_address);
+    ImGui::SetCursorPosX((windowWidth - bitcoin_qr.draw_width) * 0.5f);
+    ImGui::Image((void*)(intptr_t)bitcoin_qr.texture, ImVec2(bitcoin_qr.draw_height, bitcoin_qr.draw_width));
+    
     ImGui::Separator();
 
-    ImGui::Text("Monero: 8QK6K7XKrNVnFzCP9SVj3nf");
-
+    ImGui::Text("Monero: ");
+    ImGui::SameLine();
+    ImGui::PushStyleColor(ImGuiCol_Button,        (ImVec4)ImColor::HSV(1 / 7.0f, 0.6f, 0.6f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(1 / 7.0f, 0.7f, 0.7f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive,  (ImVec4)ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
+    if (ImGui::Button("NOT MADE WALLET")) copy_string_to_clipboard(bitcoin_address);
+    ImGui::PopStyleColor(3);
+    ImGui::SameLine();
+    if (ImGui::ImageButton((void*)(intptr_t)copy.texture, ImVec2(copy.draw_height, copy.draw_width))) copy_string_to_clipboard(bitcoin_address);
+    
     ImGui::End();
   }
 
@@ -423,13 +443,15 @@ void load_work_term_reports() {
 }
 
 void load_custom_images() {
-  comfy_image.ret = LoadTextureFromFile("data/comfy.jpg",    &comfy_image.texture, &comfy_image.width, &comfy_image.height);
-  github.ret      = LoadTextureFromFile("data/github.png",   &github.texture,      &github.width,      &github.height);
-  email.ret       = LoadTextureFromFile("data/email.png",    &email.texture,       &email.width,       &email.height);
-  home.ret        = LoadTextureFromFile("data/home.png",     &home.texture,        &home.width,        &home.height);
-  linkedin.ret    = LoadTextureFromFile("data/linkedin.png", &linkedin.texture,    &linkedin.width,    &linkedin.height);
-  journal.ret     = LoadTextureFromFile("data/journal.png",  &journal.texture,     &journal.width,     &journal.height);
-  crypto.ret      = LoadTextureFromFile("data/crypto.png",   &crypto.texture,      &crypto.width,      &crypto.height);
+  comfy_image.ret = LoadTextureFromFile("data/comfy.jpg",      &comfy_image.texture, &comfy_image.width, &comfy_image.height);
+  github.ret      = LoadTextureFromFile("data/github.png",     &github.texture,      &github.width,      &github.height);
+  email.ret       = LoadTextureFromFile("data/email.png",      &email.texture,       &email.width,       &email.height);
+  home.ret        = LoadTextureFromFile("data/home.png",       &home.texture,        &home.width,        &home.height);
+  linkedin.ret    = LoadTextureFromFile("data/linkedin.png",   &linkedin.texture,    &linkedin.width,    &linkedin.height);
+  journal.ret     = LoadTextureFromFile("data/journal.png",    &journal.texture,     &journal.width,     &journal.height);
+  crypto.ret      = LoadTextureFromFile("data/crypto.png",     &crypto.texture,      &crypto.width,      &crypto.height);
+  bitcoin_qr.ret  = LoadTextureFromFile("data/bitcoin_qr.jpg", &bitcoin_qr.texture,  &bitcoin_qr.width,  &bitcoin_qr.height);
+  copy.ret        = LoadTextureFromFile("data/copy.png",       &copy.texture,        &copy.width,        &copy.height);
 }
 
 int init() {
