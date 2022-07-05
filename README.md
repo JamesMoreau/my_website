@@ -2,4 +2,4 @@
 
 Hi, this is my personal website.
 
-You can find a live version [here](jamesmoreau.xyz).
+You can find a live version [here](www.jamesmoreau.xyz).
