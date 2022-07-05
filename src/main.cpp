@@ -223,9 +223,9 @@ void loop() {
   }
 
   if (show_crypto_window) {
-    ImGui::SetNextWindowPos(ImVec2(750, 200), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowPos(ImVec2(window_width * 1/3, window_height * 1/15), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(900, 500));
-    ImGui::Begin("My Crypto Links (give me money)", NULL, my_simple_window_flags);
+    ImGui::Begin("My Crypto Links (give me money)", &show_crypto_window, my_simple_window_flags);
     auto windowWidth = ImGui::GetWindowSize().x;
 
     // BITCOIN
@@ -267,7 +267,7 @@ void loop() {
     ImGui::Image((void*)(intptr_t)email.texture, ImVec2(email.draw_height, email.draw_width));
     ImGui::SameLine();
     if (ImGui::Button(school_email_address)) copy_string_to_clipboard(school_email_address);
-    if (ImGui::IsItemHovered()) ImGui::SetTooltip("Copy adress to clipboard");
+    if (ImGui::IsItemHovered()) ImGui::SetTooltip("Copy address to clipboard");
     
     ImGui::Image((void*)(intptr_t)github.texture, ImVec2(github.draw_height, github.draw_width));
     ImGui::SameLine();
