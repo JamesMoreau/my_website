@@ -30,6 +30,10 @@ EM_JS(void, print_to_console, (const char* str), {
   console.log(UTF8ToString(str));
 });
 
+// EM_JS(void, print_to_console, (std::string s), {
+//   console.log(UTF8ToString(s));
+// });
+
 EM_JS(void, copy_string_to_clipboard, (const char* str), {
   try {
     let s = UTF8ToString(str);

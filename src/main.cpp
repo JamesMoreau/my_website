@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
+#include <string.h>
 #include <fstream>
 #include <streambuf>
 
@@ -26,9 +27,12 @@
 // TODO:
 // [x] Make local and web targets in makefile for easier testing.
 // [x] Increase memory size to load larger images.
-// [ ] Add crypto links. Make it a button so it opens a qr code
+// [~] Add crypto links. Make it a button so it opens a qr code
 // [x] Add other links (ex. github).
-// [ ] Add floating spinning guy.
+// [ ] Add floating spinning guy gif.
+// [ ] Add Space Cadet Pinball.
+ 
+// here's how to print a string to conosle: print_to_console(std::to_string(window_width).c_str());
 
 
 GLFWwindow* g_window;
@@ -36,6 +40,9 @@ GLFWwindow* g_window;
 // ImVec4 clear_color = ImVec4(0.75f, 0.58f, 0.80f, 1.00f);
 // ImVec4 clear_color = ImVec4(0.675f, 0.918f, 0.651, 1.00f);
 auto clear_color = ImVec4(0.98f, 1.00f, 0.75f, 1.00f);
+
+int window_width;
+int window_height;
 int g_width;
 int g_height;
 
@@ -76,7 +83,9 @@ custom_image copy =  {0, 0, 20, 20, 0, false};
 char* summer_2021_report;
 char* fall_2020_report;
 
+const char* school_email_address = "jmorea03@uoguelph.ca";
 const char* bitcoin_address = "bc1q5lqcyw8dwf0y9k22syjd03p0cmq6d37c5m3h7c";
+const char* monero_address  = "45cnUodgCRzcoePUZbuhfRatCe491b8sc9VMuknJY38ueqAqBwhSqw9VCUAzm2ep6n8VsdLW3WXP59SKX2vR478DENtydJb";
 
 // Simple helper to draw text centered in a window.
 void TextCentered(std::string text) {
@@ -129,12 +138,12 @@ void on_size_changed() {
 }
 
 void loop() {
-  int width = canvas_get_width();
-  int height = canvas_get_height();
-  if (width != g_width || height != g_height)
+  window_width = canvas_get_width();
+  window_height = canvas_get_height();
+  if (window_width != g_width || window_height != g_height)
   {
-    g_width = width;
-    g_height = height;
+    g_width = window_width;
+    g_height = window_height;
     on_size_changed();
   }
 
@@ -180,8 +189,8 @@ void loop() {
   }
 
   if (show_website_description) {
-    ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(340, 300));
+    ImGui::SetNextWindowPos(ImVec2(window_width * 1/15, window_height * 1/15), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(500, 400));
     ImGui::Begin("About This Site", NULL, my_simple_window_flags);
     ImGui::TextWrapped(
       "Hello, and welcome to my website. This site is all about myself, so if you aren't interested in me, "
@@ -207,59 +216,58 @@ void loop() {
   }
 
   if (show_comfy_image) {
-    ImGui::SetNextWindowPos(ImVec2(85, 450), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowPos(ImVec2(window_width * 1/25, window_height * 1/2), ImGuiCond_FirstUseEver);
     ImGui::Begin("A Pretty Image", NULL, my_simple_window_flags);
-    // ImGui::Text("pointer = %p", (void*)comfy_image.texture);
-    // ImGui::Text("size = %d x %d", comfy_image.width, comfy_image.height);
     ImGui::Image((void*)(intptr_t)comfy_image.texture, ImVec2(comfy_image.draw_height, comfy_image.draw_width));
     ImGui::End();
   }
 
   if (show_crypto_window) {
     ImGui::SetNextWindowPos(ImVec2(750, 200), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(500, 500));
-    ImGui::Begin("My Crypto Links", NULL, my_simple_window_flags);
-    ImGui::Text("Give me money!");
-
-    ImGui::Separator();
-
+    ImGui::SetNextWindowSize(ImVec2(900, 500));
+    ImGui::Begin("My Crypto Links (give me money)", NULL, my_simple_window_flags);
     auto windowWidth = ImGui::GetWindowSize().x;
 
+    // BITCOIN
     ImGui::AlignTextToFramePadding();
     ImGui::Text("Bitcoin: ");
     ImGui::SameLine();
     ImGui::PushStyleColor(ImGuiCol_Button,        (ImVec4)ImColor::HSV(0, 0.6f, 0.6f));
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0, 0.7f, 0.7f));
     ImGui::PushStyleColor(ImGuiCol_ButtonActive,  (ImVec4)ImColor::HSV(0, 0.8f, 0.8f));
+    ImGui::SetCursorPosX((windowWidth - ImGui::CalcTextSize(bitcoin_address).x) * 0.5f);
     if (ImGui::Button(bitcoin_address)) copy_string_to_clipboard(bitcoin_address);
+    if (ImGui::IsItemHovered()) ImGui::SetTooltip("Copy address to clipboard");
     ImGui::PopStyleColor(3);
-    ImGui::SameLine();
-    if (ImGui::ImageButton((void*)(intptr_t)copy.texture, ImVec2(copy.draw_height, copy.draw_width))) copy_string_to_clipboard(bitcoin_address);
     ImGui::SetCursorPosX((windowWidth - bitcoin_qr.draw_width) * 0.5f);
     ImGui::Image((void*)(intptr_t)bitcoin_qr.texture, ImVec2(bitcoin_qr.draw_height, bitcoin_qr.draw_width));
     
     ImGui::Separator();
 
+    //MONERO
+    ImGui::AlignTextToFramePadding();
     ImGui::Text("Monero: ");
     ImGui::SameLine();
     ImGui::PushStyleColor(ImGuiCol_Button,        (ImVec4)ImColor::HSV(1 / 7.0f, 0.6f, 0.6f));
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(1 / 7.0f, 0.7f, 0.7f));
     ImGui::PushStyleColor(ImGuiCol_ButtonActive,  (ImVec4)ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
-    if (ImGui::Button("NOT MADE WALLET")) copy_string_to_clipboard(bitcoin_address);
+    ImGui::SetCursorPosX((windowWidth - ImGui::CalcTextSize(monero_address).x) * 0.5f);
+    if (ImGui::Button(monero_address)) copy_string_to_clipboard(bitcoin_address);
     ImGui::PopStyleColor(3);
     ImGui::SameLine();
-    if (ImGui::ImageButton((void*)(intptr_t)copy.texture, ImVec2(copy.draw_height, copy.draw_width))) copy_string_to_clipboard(bitcoin_address);
-    
+
     ImGui::End();
   }
 
   if (show_contact_info_window) {
-    ImGui::SetNextWindowPos(ImVec2(1650, 50), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowPos(ImVec2(window_width * 8/10, window_height * 1/15), ImGuiCond_FirstUseEver);
+    // ImGui::SetNextWindowSize(ImVec2(500, 500));
     ImGui::Begin("My Other Info", NULL, my_simple_window_flags);
 
     ImGui::Image((void*)(intptr_t)email.texture, ImVec2(email.draw_height, email.draw_width));
     ImGui::SameLine();
-    ImGui::Text("jmorea03@uoguelph.ca");
+    if (ImGui::Button(school_email_address)) copy_string_to_clipboard(school_email_address);
+    if (ImGui::IsItemHovered()) ImGui::SetTooltip("Copy adress to clipboard");
     
     ImGui::Image((void*)(intptr_t)github.texture, ImVec2(github.draw_height, github.draw_width));
     ImGui::SameLine();
@@ -291,11 +299,11 @@ void loop() {
   }
 
   if (show_coop_window) {
-    ImGui::SetNextWindowPos(ImVec2(750, 50), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(760, 820), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowPos(ImVec2(window_width * 1/3, window_height * 1/15), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(1010, 900), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowCollapsed(true, ImGuiCond_FirstUseEver);
 
-    ImGui::Begin("Co-op Experience", NULL, ImGuiWindowFlags_NoCollapse);
+    ImGui::Begin("Co-op Experience", &show_coop_window, ImGuiWindowFlags_NoCollapse);
 
     ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
     if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags)) {
@@ -361,7 +369,7 @@ int init_imgui() {
 
   // Setup style
   ImGuiIO& io = ImGui::GetIO();
-  io.Fonts->AddFontFromFileTTF("data/fonts/Ruda/static/Ruda-SemiBold.ttf", 15.0f);
+  io.Fonts->AddFontFromFileTTF("data/fonts/Ruda/static/Ruda-SemiBold.ttf", 20.0f);
   ImGui::GetStyle().FrameRounding = 4.0f;
   ImGui::GetStyle().GrabRounding = 4.0f;
 
